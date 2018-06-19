@@ -195,6 +195,39 @@ test('test createCardFromPayment', async t => {
     await client.release();
 });
 
+test('test createCardFromPayment when payment have save_card', async t => {
+    const client = await pool.connect();
+    const dalCtx = generateDalContext(client);
+    await client.query('begin;');
+    // insert fixtures (platform, project, users)
+    const basicData = await helpers.insertBasicData(client);
+
+    // insert payment into database
+    const payment = (await client.query(`
+        insert into payment_service.catalog_payments
+        (status, created_at, gateway, platform_id, user_id, project_id, data, gateway_cached_data) 
+        values ('paid', '01-31-2018 13:00', 'pagarme', $1::uuid, $2::uuid, $3::uuid, $4::json, $5::json)
+        returning *`, [
+        basicData.platform.id,
+        basicData.community_first_user.id,
+        basicData.project.id,
+        JSON.stringify(helpers.paymentBasicData({save_card: true})),
+        JSON.stringify(helpers.paymentBasicGatewayCachedData({}))
+    ])).rows[0];
+
+    const transaction = payment.gateway_cached_data.transaction;
+    const created_card = await dalCtx.createCardFromPayment(payment.id);
+
+    t.deepEqual(created_card.gateway_data, transaction.card);
+    t.is(created_card.saved_in_process, true);
+    t.is(created_card.gateway_data.id, transaction.card.id);
+    t.is(created_card.platform_id, basicData.platform.id);
+    t.is(created_card.user_id, basicData.community_first_user.id);
+
+    await client.query('rollback;');
+    await client.release();
+});
+
 test('test updateGatewayDataOnPayment', async t => {
     const client = await pool.connect();
     const dalCtx = generateDalContext(client);
