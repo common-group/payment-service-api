@@ -45,7 +45,7 @@ jobs:
       - run: bash .circleci/setup-heroku.sh
       - run: sh .circleci/deploy-heroku.sh
 
- deploy_sandbox:
+  deploy_sandbox:
     docker:
       - image: comum/docker-build-env:latest
     steps:
