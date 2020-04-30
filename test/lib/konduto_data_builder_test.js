@@ -29,8 +29,7 @@ const sampleContext = () => {
             city: 'Fortaleza',
             state: 'CE',
             zipcode: '60000420',
-            country_en: 'Australia'
-
+            country_code: 'AU'
           }
         }
       }
@@ -77,7 +76,7 @@ const expectedAntifraudData = (overwrite) => {
     customer: {
       id: 'user-id-here',
       name: 'John Appleseed',
-      tax_id: '12345678901',
+      tax_id: '10987654321',
       phone1: '558532001000',
       email: 'email@example.com',
       created_at: '2018-01-01',

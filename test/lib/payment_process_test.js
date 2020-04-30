@@ -111,6 +111,7 @@ test('test createGatewayTransaction', async t => {
         project: {
             id: '12345',
             mode: 'aon',
+            permalink: 'fooproject',
             data: {
                 name: 'foo project',
                 expires_at: '2016-09-09 12:30:11'
@@ -153,6 +154,13 @@ test('test createGatewayTransaction', async t => {
         payment_card: {
             gateway_data: {
                 id: '312'
+            }
+        },
+        user: {
+            external_id: '2355',
+            email: 'josedasilva@email.com',
+            data: {
+                name: 'José da Silva'
             }
         }
     };
@@ -334,7 +342,7 @@ test('test shouldSendTransactionToAntifraud - when transaction status is refused
 test('test sendToTransactionAntifraud', async t => {
     process.env.ANTIFRAUD_API_KEY = 'api_key_test';
     const expectedOrder = { mock: 'here' }
-    const fakeData = { payment: { created_at: '', data: { customer: { phone: {}, address: { country_en: '' } } } }, user: { created_at: '' }, payment_card: { gateway_data: { expiration_date: '' } }, project: { data: {} }, subscription: { created_at: '' }, project_owner: { data: {}, created_at: '' } }
+    const fakeData = { payment: { created_at: '', data: { customer: { phone: {}, address: { country_code: '' } } } }, user: { created_at: '' }, payment_card: { gateway_data: { expiration_date: '' } }, project: { data: {} }, subscription: { created_at: '' }, project_owner: { data: {}, created_at: '' } }
 
     nock('https://api.konduto.com').post('/v1/orders').reply(201, expectedOrder)
 
